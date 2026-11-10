@@ -22,6 +22,14 @@ async function main() {
     const vscodeExecutablePath = await downloadAndUnzipVSCode("stable");
     const extensions = path.join(temporary, "extensions");
     const userData = path.join(temporary, "profile");
+    const launcher =
+      process.platform === "win32"
+        ? await fs.readFile(
+            path.join(path.dirname(vscodeExecutablePath), "bin/code.cmd"),
+            "utf8",
+          )
+        : undefined;
+    const cli = cliEntryPoint(vscodeExecutablePath, process.platform, launcher);
     for (const extension of [
       "hashicorp.terraform",
       "jkillian.custom-local-formatters",
@@ -29,7 +37,7 @@ async function main() {
       execFileSync(
         vscodeExecutablePath,
         [
-          cliEntryPoint(vscodeExecutablePath, process.platform),
+          cli,
           "--extensions-dir",
           extensions,
           "--user-data-dir",

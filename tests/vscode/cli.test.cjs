@@ -13,14 +13,26 @@ for (const [platform, executable, expected] of [
     "/test folder/VSCode/code",
     "/test folder/VSCode/resources/app/out/cli.js",
   ],
-  [
-    "win32",
-    "C:\\test folder\\VSCode\\Code.exe",
-    "C:\\test folder\\VSCode\\resources\\app\\out\\cli.js",
-  ],
 ]) {
   test(`Resolve the shell-free CLI entry point for ${platform}.`, () => {
     assert.equal(cliEntryPoint(executable, platform), expected);
     assert.equal(cliEntryPoint(executable, platform), expected);
   });
 }
+
+for (const directory of ["", "package-version\\", "package with spaces\\"]) {
+  test(`Resolve the Windows launcher route through "${directory}".`, () => {
+    const executable = "C:\\test folder\\VSCode\\Code.exe";
+    const launcher = `@echo off\n"%~dp0..\\Code.exe" "%~dp0..\\${directory}resources\\app\\out\\cli.js" %*\n`;
+    const expected = `C:\\test folder\\VSCode\\${directory}resources\\app\\out\\cli.js`;
+    assert.equal(cliEntryPoint(executable, "win32", launcher), expected);
+    assert.equal(cliEntryPoint(executable, "win32", launcher), expected);
+  });
+}
+
+test("Reject Windows launchers without an identifiable CLI route.", () => {
+  assert.throws(
+    () => cliEntryPoint("C:\\test folder\\Code.exe", "win32", "@echo off\n"),
+    /does not identify a CLI entry point/,
+  );
+});
