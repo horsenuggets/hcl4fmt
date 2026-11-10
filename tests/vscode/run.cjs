@@ -67,6 +67,7 @@ async function main() {
             languages,
           },
         ],
+        "files.insertFinalNewline": true,
         "terraform.languageServer.enable": false,
       };
       for (const language of languages) {
@@ -82,19 +83,7 @@ async function main() {
       await fs.mkdir(path.join(workspace, ".vscode"));
       await fs.writeFile(
         path.join(workspace, ".vscode/settings.json"),
-        JSON.stringify(settings),
-      );
-      execFileSync(
-        "go",
-        [
-          "-C",
-          root,
-          "build",
-          "-o",
-          path.join(temporary, "tf4fmt"),
-          "./src/cmd/tf4fmt",
-        ],
-        { stdio: "inherit" },
+        `${JSON.stringify(settings, null, 2)}\n`,
       );
       await runTests({
         vscodeExecutablePath,

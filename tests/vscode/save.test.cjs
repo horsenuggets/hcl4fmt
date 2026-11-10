@@ -23,9 +23,6 @@ exports.run = async () => {
   await provider.activate();
   await vscode.extensions.getExtension("hashicorp.terraform").activate();
   const folder = vscode.workspace.workspaceFolders[0].uri;
-  await vscode.workspace
-    .getConfiguration("files", folder)
-    .update("insertFinalNewline", true, vscode.ConfigurationTarget.Workspace);
   const readinessUri = vscode.Uri.joinPath(folder, "save-readiness.txt");
   await vscode.workspace.fs.writeFile(readinessUri, Buffer.from(""));
   const readinessDocument =
@@ -78,7 +75,7 @@ exports.run = async () => {
   ];
   for (const [filename, language, input, expected] of cases) {
     const uri = vscode.Uri.joinPath(nested, filename);
-    await vscode.workspace.fs.writeFile(uri, Buffer.from(""));
+    await vscode.workspace.fs.writeFile(uri, Buffer.from("# Fixture.\n"));
     const document = await vscode.workspace.openTextDocument(uri);
     assert.equal(document.languageId, language);
     await vscode.window.showTextDocument(document);
