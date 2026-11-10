@@ -73,7 +73,6 @@ jobs:
         if: runner.os == 'Windows'
         run: go test ./...
       - uses: actions/setup-node@v4
-        if: runner.os == 'Linux'
         with:
           node-version: 24
       - name: Test VS Code format-on-save
@@ -82,3 +81,9 @@ jobs:
         run: |
           npm ci
           xvfb-run -a npm test
+      - name: Test VS Code Windows paths
+        if: runner.os == 'Windows'
+        working-directory: tests/vscode
+        run: |
+          npm ci
+          npm test

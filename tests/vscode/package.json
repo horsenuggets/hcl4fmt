@@ -7,7 +7,7 @@
     "vscode": "^1.100.0"
   },
   "scripts": {
-    "test": "node run.cjs"
+    "test": "node --test cli.test.cjs && node run.cjs"
   },
   "devDependencies": {
     "@vscode/test-electron": "3.1.0"

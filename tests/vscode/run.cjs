@@ -2,11 +2,8 @@ const { execFileSync } = require("node:child_process");
 const fs = require("node:fs/promises");
 const os = require("node:os");
 const path = require("node:path");
-const {
-  downloadAndUnzipVSCode,
-  resolveCliArgsFromVSCodeExecutablePath,
-  runTests,
-} = require("@vscode/test-electron");
+const { downloadAndUnzipVSCode, runTests } = require("@vscode/test-electron");
+const { cliEntryPoint } = require("./cli.cjs");
 
 const languages = [
   "terraform",
@@ -25,16 +22,14 @@ async function main() {
     const vscodeExecutablePath = await downloadAndUnzipVSCode("stable");
     const extensions = path.join(temporary, "extensions");
     const userData = path.join(temporary, "profile");
-    const [cli, ...cliArgs] =
-      resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
     for (const extension of [
       "hashicorp.terraform",
       "jkillian.custom-local-formatters",
     ]) {
       execFileSync(
-        cli,
+        vscodeExecutablePath,
         [
-          ...cliArgs,
+          cliEntryPoint(vscodeExecutablePath, process.platform),
           "--extensions-dir",
           extensions,
           "--user-data-dir",
@@ -42,7 +37,10 @@ async function main() {
           "--install-extension",
           extension,
         ],
-        { stdio: "inherit", shell: process.platform === "win32" },
+        {
+          env: { ...process.env, ELECTRON_RUN_AS_NODE: "1" },
+          stdio: "inherit",
+        },
       );
     }
     for (const directory of ["Submodules", "submodules"]) {
