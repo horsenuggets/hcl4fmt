@@ -1,0 +1,24 @@
+# Editor & operating system files at any depth
+*.swo
+*.swp
+.DS_Store
+.idea/
+.vscode/
+
+# Environment files at any depth, except anonymous examples
+.env
+.env.*
+!.env.example
+
+# Generated build artifacts at the repository root
+/dist/
+
+# Coverage reports generated at the repository root
+/coverage/
+/coverage.html
+/coverage.out
+/coverage.txt
+
+# Parallel worktrees at the repository root
+/.worktrees/
+/.wt/
