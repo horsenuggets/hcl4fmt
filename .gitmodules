@@ -1,0 +1,3 @@
+[submodule "submodules/hcl"]
+	path = submodules/hcl
+	url = git@github.com:horsenuggets/hcl.git
