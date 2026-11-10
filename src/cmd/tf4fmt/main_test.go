@@ -215,6 +215,30 @@ func TestRunHelpAndVersion(t *testing.T) {
 	}
 }
 
+func TestRunRejectsDirectorySymlinkAliases(t *testing.T) {
+	root := t.TempDir()
+	path := filepath.Join(root, "main.tf")
+	original := "value=1\n"
+	if err := os.WriteFile(path, []byte(original), 0600); err != nil {
+		t.Fatal(err)
+	}
+	link := filepath.Join(t.TempDir(), "linked-directory")
+	if err := os.Symlink(root, link); err != nil {
+		t.Skipf("Symbolic links are unavailable. %v", err)
+	}
+	separator := string(filepath.Separator)
+	for _, target := range []string{link, link + separator, link + separator + "."} {
+		var stdout, stderr bytes.Buffer
+		if code := run([]string{target}, strings.NewReader(""), &stdout, &stderr); code != 2 {
+			t.Fatalf("Expected rejection of %q, got exit %d.", target, code)
+		}
+		got, err := os.ReadFile(path)
+		if err != nil || string(got) != original {
+			t.Fatalf("Symlink target changed. Got %q with error %v.", got, err)
+		}
+	}
+}
+
 type failingStream struct{}
 
 func (failingStream) Read([]byte) (int, error) {

@@ -28,6 +28,7 @@ func ignored(name string) bool {
 func Discover(paths []string, recursive bool) ([]string, error) {
 	found := make(map[string]string)
 	for _, path := range paths {
+		path = filepath.Clean(path)
 		info, err := os.Lstat(path)
 		if err != nil {
 			return nil, err
@@ -43,7 +44,7 @@ func Discover(paths []string, recursive bool) ([]string, error) {
 			if err != nil {
 				return nil, err
 			}
-			found[absolute] = filepath.Clean(path)
+			found[absolute] = path
 			continue
 		}
 		err = filepath.WalkDir(path, func(current string, entry fs.DirEntry, walkErr error) error {

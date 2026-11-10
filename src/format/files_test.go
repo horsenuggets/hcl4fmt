@@ -70,7 +70,8 @@ func TestDiscoverSymlinks(t *testing.T) {
 	if err := os.Symlink(filepath.Dir(target), dirLink); err != nil {
 		t.Fatal(err)
 	}
-	for _, path := range []string{link, dirLink} {
+	separator := string(filepath.Separator)
+	for _, path := range []string{link, dirLink, dirLink + separator, dirLink + separator + "."} {
 		if _, err := Discover([]string{path}, true); err == nil {
 			t.Errorf("Expected rejection of explicit symbolic link %q.", path)
 		}
