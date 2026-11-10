@@ -1,0 +1,15 @@
+{
+  "name": "tf4fmt-vscode-tests",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22",
+    "vscode": "^1.100.0"
+  },
+  "scripts": {
+    "test": "node run.cjs"
+  },
+  "devDependencies": {
+    "@vscode/test-electron": "3.1.0"
+  }
+}

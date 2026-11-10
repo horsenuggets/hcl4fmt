@@ -10,6 +10,10 @@
 .env.*
 !.env.example
 
+# Node dependencies and VS Code test downloads at any depth
+.vscode-test/
+node_modules/
+
 # Generated build artifacts at the repository root
 /dist/
 
