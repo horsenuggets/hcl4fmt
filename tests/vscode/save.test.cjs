@@ -21,6 +21,7 @@ exports.run = async () => {
   );
   assert.ok(provider, "The formatter provider must be installed.");
   await provider.activate();
+  await vscode.extensions.getExtension("hashicorp.hcl").activate();
   await vscode.extensions.getExtension("hashicorp.terraform").activate();
   const folder = vscode.workspace.workspaceFolders[0].uri;
   const readinessUri = vscode.Uri.joinPath(folder, "save-readiness.txt");
@@ -42,6 +43,18 @@ exports.run = async () => {
   const nested = vscode.Uri.joinPath(folder, "nested terraform");
   await vscode.workspace.fs.createDirectory(nested);
   const cases = [
+    [
+      "config.hcl",
+      "hcl",
+      "server {\n  port=8080 # Listener.\n  tags=[\n    \"a\",\n    \"b\",\n  ]\n}\n",
+      'server {\n    port = 8080 # Listener.\n    tags = [\n        "a",\n        "b"\n    ]\n}\n',
+    ],
+    [
+      ".terraform.lock.hcl",
+      "hcl",
+      'provider "registry.terraform.io/example/example" {\n  version="1.0.0"\n  hashes=[\n    "h1:abc",\n  ]\n}\n',
+      'provider "registry.terraform.io/example/example" {\n    version = "1.0.0"\n    hashes = [\n        "h1:abc"\n    ]\n}\n',
+    ],
     [
       "main.tf",
       "terraform",

@@ -17,7 +17,7 @@ for os in darwin linux windows; do
             extension='.exe'
         fi
         CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -trimpath \
-            -ldflags="-X github.com/horsenuggets/tf4fmt/src/version.Version=$version" \
-            -o "dist/tf4fmt-$os-$arch$extension" ./src/cmd/tf4fmt
+            -ldflags="-X github.com/horsenuggets/hcl4fmt/src/version.Version=$version" \
+            -o "dist/hcl4fmt-$os-$arch$extension" ./src/cmd/hcl4fmt
     done
 done

@@ -16,5 +16,5 @@ fi
 
 mkdir -p dist
 go build -trimpath \
-    -ldflags="-X github.com/horsenuggets/tf4fmt/src/version.Version=$version" \
-    -o "dist/tf4fmt$extension" ./src/cmd/tf4fmt
+    -ldflags="-X github.com/horsenuggets/hcl4fmt/src/version.Version=$version" \
+    -o "dist/hcl4fmt$extension" ./src/cmd/hcl4fmt

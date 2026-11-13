@@ -10,12 +10,12 @@ import (
 )
 
 func TestSupported(t *testing.T) {
-	for _, name := range []string{"main.tf", "values.tfvars", "example.tftest.hcl", "example.tfmock.hcl", "example.tfquery.hcl", ".terraform.lock.hcl"} {
+	for _, name := range []string{"main.tf", "values.tfvars", "example.tftest.hcl", "example.tfmock.hcl", "example.tfquery.hcl", ".terraform.lock.hcl", "other.hcl", "other.lock.hcl", "packer.pkr.hcl"} {
 		if !Supported(filepath.Join("nested", name)) {
 			t.Errorf("Expected support for %q.", name)
 		}
 	}
-	for _, name := range []string{"main.tf.json", "values.tfvars.json", "other.hcl", "other.lock.hcl", ".terraform.lock.hcl.bak", "main.TF", "main.tf.bak", "README"} {
+	for _, name := range []string{"main.tf.json", "values.tfvars.json", "config.hcl.json", ".terraform.lock.hcl.bak", "main.HCL", "main.TF", "main.tf.bak", "README"} {
 		if Supported(name) {
 			t.Errorf("Unexpected support for %q.", name)
 		}
@@ -29,13 +29,13 @@ func TestDiscover(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	names := []string{"z.tf", "a.tfvars", "b.tftest.hcl", "c.tfmock.hcl", "d.tfquery.hcl", ".terraform.lock.hcl", "nested/child.tf", ".hidden/skip.tf", ".hidden/.terraform.lock.hcl", "~backup/skip.tf", "backup~/skip.tf", "#backup#/skip.tf", ".skip.tf", "~skip.tf", "skip.tf~", "#skip.tf#", "skip.tf.json", "skip.hcl"}
+	names := []string{"z.tf", "a.tfvars", "b.tftest.hcl", "c.tfmock.hcl", "d.tfquery.hcl", ".terraform.lock.hcl", "nested/child.tf", ".hidden/skip.tf", ".hidden/.terraform.lock.hcl", "~backup/skip.tf", "backup~/skip.tf", "#backup#/skip.tf", ".skip.tf", "~skip.tf", "skip.tf~", "#skip.tf#", "skip.tf.json", "generic.hcl", ".skip.hcl", ".hidden/skip.hcl"}
 	for _, name := range names {
 		if err := os.WriteFile(filepath.Join(root, filepath.FromSlash(name)), nil, 0600); err != nil {
 			t.Fatal(err)
 		}
 	}
-	want := []string{filepath.Join(root, ".terraform.lock.hcl"), filepath.Join(root, "a.tfvars"), filepath.Join(root, "b.tftest.hcl"), filepath.Join(root, "c.tfmock.hcl"), filepath.Join(root, "d.tfquery.hcl"), filepath.Join(root, "z.tf")}
+	want := []string{filepath.Join(root, ".terraform.lock.hcl"), filepath.Join(root, "a.tfvars"), filepath.Join(root, "b.tftest.hcl"), filepath.Join(root, "c.tfmock.hcl"), filepath.Join(root, "d.tfquery.hcl"), filepath.Join(root, "generic.hcl"), filepath.Join(root, "z.tf")}
 	for _, recursive := range []bool{false, true} {
 		t.Run(map[bool]string{false: "shallow", true: "recursive"}[recursive], func(t *testing.T) {
 			expected := append([]string(nil), want...)

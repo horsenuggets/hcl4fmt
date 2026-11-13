@@ -1,10 +1,12 @@
-# tf4fmt
+# hcl4fmt
 
-Terraform formatter with four-space indentation.
+HCL formatter with four-space indentation.
 
-`tf4fmt` formats native HCL in `.tf`, `.tfvars`, `.tftest.hcl`, `.tfmock.hcl`,
-`.tfquery.hcl`, and `.terraform.lock.hcl` files using four spaces per indentation level.
-It uses one space around `=` and before trailing comments, and removes trailing commas from
+`hcl4fmt` formats native HCL in any `.hcl` file, plus `.tf` and `.tfvars` files, using four
+spaces per indentation level. That covers Terraform files such as `.tftest.hcl`,
+`.tfmock.hcl`, `.tfquery.hcl`, and the `.terraform.lock.hcl` dependency lockfile. Directory
+scans skip hidden directories such as `.terraform/`, and the exact `.terraform.lock.hcl`
+file is the only hidden file they include. It uses one space around `=` and before trailing comments, and removes trailing commas from
 list constructors. It does not perform Terraform modernization or rewrite expressions into
 newer Terraform syntax. JSON files, including `.tf.json` and `.tfvars.json`, are skipped.
 
@@ -13,19 +15,19 @@ newer Terraform syntax. JSON files, including `.tf.json` and `.tfvars.json`, are
 Run the formatter on a file or directory...
 
 ```sh
-tf4fmt main.tf
-tf4fmt .
+hcl4fmt main.tf
+hcl4fmt .
 ```
 
 Choose the behavior needed for a local edit or automated check...
 
-- **Check** → Use `tf4fmt -check .` to fail when files need formatting.
-- **Diff** → Use `tf4fmt -diff -write=false .` to inspect changes without writing files.
-- **Recursive** → Use `tf4fmt -recursive .` to include nested directories.
-- **Output Only** → Use `tf4fmt -write=false -list=false main.tf` to print formatted HCL
+- **Check** → Use `hcl4fmt -check .` to fail when files need formatting.
+- **Diff** → Use `hcl4fmt -diff -write=false .` to inspect changes without writing files.
+- **Recursive** → Use `hcl4fmt -recursive .` to include nested directories.
+- **Output Only** → Use `hcl4fmt -write=false -list=false main.tf` to print formatted HCL
   without writing the file or listing its name.
-- **Quiet Listing** → Use `tf4fmt -list=false .` to suppress formatted file names.
-- **Standard Input** → Use `tf4fmt - < main.tf` to format stdin and write to stdout.
+- **Quiet Listing** → Use `hcl4fmt -list=false .` to suppress formatted file names.
+- **Standard Input** → Use `hcl4fmt - < main.tf` to format stdin and write to stdout.
 
 Place flags before file or directory arguments. Use `-` as an explicit stdin argument.
 
@@ -36,9 +38,9 @@ in `submodules/hcl/`...
 
 ```sh
 git clone --recurse-submodules <repository-url>
-cd tf4fmt
+cd hcl4fmt
 scripts/build.sh
-./dist/tf4fmt -check .
+./dist/hcl4fmt -check .
 ```
 
 For an existing clone, initialize the dependency before building...
@@ -48,14 +50,14 @@ git submodule update --init --recursive
 ```
 
 The build script reads `VERSION` and injects it into
-`github.com/horsenuggets/tf4fmt/src/version.Version`. Windows builds use the `.exe`
+`github.com/horsenuggets/hcl4fmt/src/version.Version`. Windows builds use the `.exe`
 extension. Scripts resolve the repository from their own location, so they work from other
 working directories as well.
 
 A direct Go build also requires the initialized submodule...
 
 ```sh
-go build -o dist/tf4fmt ./src/cmd/tf4fmt
+go build -o dist/hcl4fmt ./src/cmd/hcl4fmt
 ```
 
 Use `scripts/build.sh` when version injection is needed. Installation with
@@ -64,8 +66,8 @@ local HCL submodule.
 
 ## VS Code
 
-Install the HashiCorp Terraform and Custom Local Formatters extensions, and make Go
-available on `PATH`. Initialize the pinned formatter submodule recursively. In a trusted,
+Install the HashiCorp HCL, HashiCorp Terraform, and Custom Local Formatters extensions,
+and make Go available on `PATH`. Initialize the pinned formatter submodule recursively. In a trusted,
 single-folder repository window, configure a stdin formatter command relative to the
 workspace root...
 
@@ -73,8 +75,9 @@ workspace root...
 {
   "customLocalFormatters.formatters": [
     {
-      "command": "go -C Submodules/tf4fmt run ./src/cmd/tf4fmt -",
+      "command": "go -C Submodules/hcl4fmt run ./src/cmd/hcl4fmt -",
       "languages": [
+        "hcl",
         "terraform",
         "terraform-mock",
         "terraform-search",
@@ -83,6 +86,14 @@ workspace root...
       ]
     }
   ],
+  "[hcl]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters",
+    "editor.detectIndentation": false,
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4
+  },
   "[terraform]": {
     "editor.defaultFormatter": "jkillian.custom-local-formatters",
     "editor.detectIndentation": false,
@@ -94,10 +105,12 @@ workspace root...
 }
 ```
 
-Match the submodule directory's actual casing and repeat the language-specific editor
-settings for the other registered language IDs. Preserve existing settings and formatter
-registrations. Recommend `hashicorp.terraform` and `jkillian.custom-local-formatters` in
-`.vscode/extensions.json`; recommendations do not automatically install extensions.
+Keep `.tf` files in Terraform mode and generic `.hcl` files, including
+`.terraform.lock.hcl`, in HCL mode. Match the submodule directory's actual casing and
+repeat the language-specific editor settings for the other registered language IDs.
+Preserve existing settings and formatter registrations. Recommend `hashicorp.hcl`,
+`hashicorp.terraform`, and `jkillian.custom-local-formatters` in `.vscode/extensions.json`;
+recommendations do not automatically install extensions.
 
 Explicit saves format the buffer through stdin, including files in nested directories and
 workspace paths containing spaces. Timer-based Auto Save does not run VS Code's normal
@@ -127,8 +140,9 @@ commands...
   mocked Go commands. No Go source or Go toolchain is required for these tests.
 - **Test** → Run `scripts/test.sh` for script checks and Go tests with race detection.
 - **Test Editor Saves** → With Node.js installed, run `npm ci --prefix tests/vscode` and
-  `npm test --prefix tests/vscode`. The tests download VS Code and install both required
-  extensions into an isolated profile. Linux requires a display or `xvfb-run`.
+  `npm test --prefix tests/vscode`. The tests download VS Code (or reuse the executable
+  named by `VSCODE_EXECUTABLE_PATH`) and install the three required extensions into an
+  isolated profile. Linux requires a display or `xvfb-run`.
 - **Cross Compile** → Run `scripts/cross.sh` for Darwin, Linux, and Windows binaries on
   both `amd64` and `arm64`, with CGO disabled.
 - **Clean** → Run `scripts/clean.sh` to remove `dist/` and root coverage reports.

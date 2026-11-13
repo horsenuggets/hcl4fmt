@@ -23,8 +23,8 @@ jobs:
       - name: Build and smoke test native binary
         run: |
           scripts/build.sh
-          ./dist/tf4fmt --help
-          ./dist/tf4fmt --version
+          ./dist/hcl4fmt --help
+          ./dist/hcl4fmt --version
       - name: Cross compile supported targets
         run: scripts/cross.sh
       - uses: actions/upload-artifact@v4

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/horsenuggets/tf4fmt/src/version"
+	"github.com/horsenuggets/hcl4fmt/src/version"
 )
 
 func TestRunFileModes(t *testing.T) {
@@ -104,7 +104,7 @@ func TestRunStdin(t *testing.T) {
 		{"write and list disabled", "value=1\n", "value = 1\n", []string{"-write=false", "-list=false"}, 0},
 		{"changed check", "value=1\n", "", []string{"-check", "-write=true"}, 3},
 		{"clean check", "value = 1\n", "", []string{"-check"}, 0},
-		{"diff", "value=1\n", "--- old/stdin.tf\n+++ new/stdin.tf\n@@ -1 +1 @@\n-value=1\n+value = 1\n", []string{"-diff"}, 0},
+		{"diff", "value=1\n", "--- old/stdin.hcl\n+++ new/stdin.hcl\n@@ -1 +1 @@\n-value=1\n+value = 1\n", []string{"-diff"}, 0},
 		{"empty", "", "", nil, 0},
 	} {
 		t.Run(tc.name, func(t *testing.T) {

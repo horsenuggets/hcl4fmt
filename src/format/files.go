@@ -11,12 +11,12 @@ import (
 
 const dependencyLockFilename = ".terraform.lock.hcl"
 
-// Supported reports whether a file is native Terraform HCL or a dependency lockfile.
+// Supported reports whether a file is native HCL, including Terraform configuration.
 func Supported(path string) bool {
 	if filepath.Base(path) == dependencyLockFilename {
 		return true
 	}
-	for _, suffix := range []string{".tf", ".tfvars", ".tftest.hcl", ".tfmock.hcl", ".tfquery.hcl"} {
+	for _, suffix := range []string{".hcl", ".tf", ".tfvars"} {
 		if strings.HasSuffix(path, suffix) {
 			return true
 		}
@@ -101,7 +101,7 @@ func Write(path string, source []byte) (err error) {
 	if !info.Mode().IsRegular() {
 		return fmt.Errorf("cannot replace non-regular file %q", path)
 	}
-	temporary, err := os.CreateTemp(filepath.Dir(path), ".tf4fmt-*")
+	temporary, err := os.CreateTemp(filepath.Dir(path), ".hcl4fmt-*")
 	if err != nil {
 		return err
 	}
