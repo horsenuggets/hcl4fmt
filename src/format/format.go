@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
 
-// Source validates input before formatting its whitespace. Literal bytes remain intact.
+// Source validates input before formatting its presentation. Literal bytes remain intact.
 func Source(source []byte, filename string) ([]byte, error) {
 	_, diagnostics := hclsyntax.ParseConfig(source, filename, hcl.InitialPos)
 	if diagnostics.HasErrors() {

@@ -2,10 +2,11 @@
 
 Terraform formatter with four-space indentation.
 
-`tf4fmt` formats native HCL in `.tf`, `.tfvars`, `.tftest.hcl`, `.tfmock.hcl`, and
-`.tfquery.hcl` files using four spaces per indentation level. It changes HCL whitespace
-only. It does not perform Terraform modernization or rewrite expressions into newer
-Terraform syntax. JSON files, including `.tf.json` and `.tfvars.json`, are skipped.
+`tf4fmt` formats native HCL in `.tf`, `.tfvars`, `.tftest.hcl`, `.tfmock.hcl`,
+`.tfquery.hcl`, and `.terraform.lock.hcl` files using four spaces per indentation level.
+It uses one space around `=` and before trailing comments, and removes trailing commas from
+list constructors. It does not perform Terraform modernization or rewrite expressions into
+newer Terraform syntax. JSON files, including `.tf.json` and `.tfvars.json`, are skipped.
 
 ## Usage
 

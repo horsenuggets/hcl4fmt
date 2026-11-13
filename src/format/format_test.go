@@ -18,12 +18,22 @@ func TestSourceGolden(t *testing.T) {
 		{
 			name:   "collections",
 			source: "locals {\nitems = [\n{\nvalue=1\n},\n]\n}\n",
-			want:   "locals {\n    items = [\n        {\n            value = 1\n        },\n    ]\n}\n",
+			want:   "locals {\n    items = [\n        {\n            value = 1\n        }\n    ]\n}\n",
 		},
 		{
 			name:   "comments",
 			source: "# Heading.\nlocals {\n// Keep this comment.\nvalue=1 # Inline.\n/* Keep this too. */\n}\n",
 			want:   "# Heading.\nlocals {\n    // Keep this comment.\n    value = 1 # Inline.\n    /* Keep this too. */\n}\n",
+		},
+		{
+			name:   "compact assignments and comments",
+			source: "locals {\nfoo    = bar\nbar    = foo # Inline.\nfoobar = barfoo\n}\n",
+			want:   "locals {\n    foo = bar\n    bar = foo # Inline.\n    foobar = barfoo\n}\n",
+		},
+		{
+			name:   "trailing list commas",
+			source: "locals {\nitems = [\n\"a\",\n\"b\",\n\"c\", // this comma here i dont want it\n]\n}\n",
+			want:   "locals {\n    items = [\n        \"a\",\n        \"b\",\n        \"c\" // this comma here i dont want it\n    ]\n}\n",
 		},
 		{
 			name:   "heredoc and template literals",
