@@ -1,10 +1,12 @@
 # hcl4fmt
 
-Terraform formatter with four-space indentation.
+HCL formatter with four-space indentation.
 
-`hcl4fmt` formats native HCL in `.tf`, `.tfvars`, `.tftest.hcl`, `.tfmock.hcl`,
-`.tfquery.hcl`, and `.terraform.lock.hcl` files using four spaces per indentation level.
-It uses one space around `=` and before trailing comments, and removes trailing commas from
+`hcl4fmt` formats native HCL in any `.hcl` file, plus `.tf` and `.tfvars` files, using four
+spaces per indentation level. That covers Terraform files such as `.tftest.hcl`,
+`.tfmock.hcl`, `.tfquery.hcl`, and the `.terraform.lock.hcl` dependency lockfile. Directory
+scans skip hidden directories such as `.terraform/`, and the exact `.terraform.lock.hcl`
+file is the only hidden file they include. It uses one space around `=` and before trailing comments, and removes trailing commas from
 list constructors. It does not perform Terraform modernization or rewrite expressions into
 newer Terraform syntax. JSON files, including `.tf.json` and `.tfvars.json`, are skipped.
 
@@ -64,8 +66,8 @@ local HCL submodule.
 
 ## VS Code
 
-Install the HashiCorp Terraform and Custom Local Formatters extensions, and make Go
-available on `PATH`. Initialize the pinned formatter submodule recursively. In a trusted,
+Install the HashiCorp HCL, HashiCorp Terraform, and Custom Local Formatters extensions,
+and make Go available on `PATH`. Initialize the pinned formatter submodule recursively. In a trusted,
 single-folder repository window, configure a stdin formatter command relative to the
 workspace root...
 
@@ -75,6 +77,7 @@ workspace root...
     {
       "command": "go -C Submodules/hcl4fmt run ./src/cmd/hcl4fmt -",
       "languages": [
+        "hcl",
         "terraform",
         "terraform-mock",
         "terraform-search",
@@ -83,6 +86,14 @@ workspace root...
       ]
     }
   ],
+  "[hcl]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters",
+    "editor.detectIndentation": false,
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4
+  },
   "[terraform]": {
     "editor.defaultFormatter": "jkillian.custom-local-formatters",
     "editor.detectIndentation": false,
@@ -94,10 +105,12 @@ workspace root...
 }
 ```
 
-Match the submodule directory's actual casing and repeat the language-specific editor
-settings for the other registered language IDs. Preserve existing settings and formatter
-registrations. Recommend `hashicorp.terraform` and `jkillian.custom-local-formatters` in
-`.vscode/extensions.json`; recommendations do not automatically install extensions.
+Keep `.tf` files in Terraform mode and generic `.hcl` files, including
+`.terraform.lock.hcl`, in HCL mode. Match the submodule directory's actual casing and
+repeat the language-specific editor settings for the other registered language IDs.
+Preserve existing settings and formatter registrations. Recommend `hashicorp.hcl`,
+`hashicorp.terraform`, and `jkillian.custom-local-formatters` in `.vscode/extensions.json`;
+recommendations do not automatically install extensions.
 
 Explicit saves format the buffer through stdin, including files in nested directories and
 workspace paths containing spaces. Timer-based Auto Save does not run VS Code's normal
@@ -127,8 +140,9 @@ commands...
   mocked Go commands. No Go source or Go toolchain is required for these tests.
 - **Test** → Run `scripts/test.sh` for script checks and Go tests with race detection.
 - **Test Editor Saves** → With Node.js installed, run `npm ci --prefix tests/vscode` and
-  `npm test --prefix tests/vscode`. The tests download VS Code and install both required
-  extensions into an isolated profile. Linux requires a display or `xvfb-run`.
+  `npm test --prefix tests/vscode`. The tests download VS Code (or reuse the executable
+  named by `VSCODE_EXECUTABLE_PATH`) and install the three required extensions into an
+  isolated profile. Linux requires a display or `xvfb-run`.
 - **Cross Compile** → Run `scripts/cross.sh` for Darwin, Linux, and Windows binaries on
   both `amd64` and `arm64`, with CGO disabled.
 - **Clean** → Run `scripts/clean.sh` to remove `dist/` and root coverage reports.
