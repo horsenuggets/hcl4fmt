@@ -168,7 +168,7 @@ func TestRunDependencyLockFile(t *testing.T) {
 	root := t.TempDir()
 	path := filepath.Join(root, ".terraform.lock.hcl")
 	before := "provider \"registry.terraform.io/hashicorp/null\" {\nversion    = \"3.2.4\"\nconstraints = \">= 3.0.0\"\nhashes=[\n\"h1:abc\",\n]\n}\n"
-	after := "provider \"registry.terraform.io/hashicorp/null\" {\n    version = \"3.2.4\"\n    constraints = \">= 3.0.0\"\n    hashes = [\n        \"h1:abc\",\n    ]\n}\n"
+	after := "provider \"registry.terraform.io/hashicorp/null\" {\n    version = \"3.2.4\"\n    constraints = \">= 3.0.0\"\n    hashes = [\n        \"h1:abc\"\n    ]\n}\n"
 	if err := os.WriteFile(path, []byte(before), 0600); err != nil {
 		t.Fatal(err)
 	}
