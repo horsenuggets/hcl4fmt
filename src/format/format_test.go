@@ -26,6 +26,11 @@ func TestSourceGolden(t *testing.T) {
 			want:   "# Heading.\nlocals {\n    // Keep this comment.\n    value = 1 # Inline.\n    /* Keep this too. */\n}\n",
 		},
 		{
+			name:   "compact assignments and comments",
+			source: "locals {\nfoo    = bar\nbar    = foo # Inline.\nfoobar = barfoo\n}\n",
+			want:   "locals {\n    foo = bar\n    bar = foo # Inline.\n    foobar = barfoo\n}\n",
+		},
+		{
 			name:   "heredoc and template literals",
 			source: "locals {\ntext=<<-EOT\n  literal   spaces\n    ${join(\",\", [\"a\", \"b\"])}\n%{ if true }\n  unchanged\n%{ endif }\nEOT\n\ntemplate=\"keep   ${join(\",\", [\"a\", \"b\"])}  spaces\"\n}\n",
 			want:   "locals {\n    text = <<-EOT\n  literal   spaces\n    ${join(\",\", [\"a\", \"b\"])}\n%{if true}\n  unchanged\n%{endif}\nEOT\n\n    template = \"keep   ${join(\",\", [\"a\", \"b\"])}  spaces\"\n}\n",
