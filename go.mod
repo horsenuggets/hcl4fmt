@@ -1,4 +1,4 @@
-module github.com/horsenuggets/tf4fmt
+module github.com/horsenuggets/hcl4fmt
 
 go 1.25.0
 

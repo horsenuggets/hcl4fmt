@@ -1,4 +1,4 @@
-// Command tf4fmt formats native Terraform HCL with four-space indentation.
+// Command hcl4fmt formats native HCL with four-space indentation.
 package main
 
 import (
@@ -9,15 +9,15 @@ import (
 	"io"
 	"os"
 
-	"github.com/horsenuggets/tf4fmt/src/format"
-	"github.com/horsenuggets/tf4fmt/src/version"
+	"github.com/horsenuggets/hcl4fmt/src/format"
+	"github.com/horsenuggets/hcl4fmt/src/version"
 )
 
-const usage = `Terraform formatter with four-space indentation.
+const usage = `HCL formatter with four-space indentation.
 
 [Usage]
-    tf4fmt [options] [file or directory ...]
-    tf4fmt [options] -
+    hcl4fmt [options] [file or directory ...]
+    hcl4fmt [options] -
 
 Options...
     -check          Check formatting without writing files.
@@ -38,7 +38,7 @@ func main() {
 }
 
 func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
-	flags := flag.NewFlagSet("tf4fmt", flag.ContinueOnError)
+	flags := flag.NewFlagSet("hcl4fmt", flag.ContinueOnError)
 	flags.SetOutput(io.Discard)
 	check := flags.Bool("check", false, "Check formatting.")
 	diff := flags.Bool("diff", false, "Show differences.")
@@ -127,7 +127,7 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		if err != nil {
 			return report(err)
 		}
-		if err := process("stdin.tf", source, true); err != nil {
+		if err := process("stdin.hcl", source, true); err != nil {
 			return report(err)
 		}
 	} else {
