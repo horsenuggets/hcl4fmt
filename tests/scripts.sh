@@ -49,13 +49,13 @@ cd -- "$temporary"
 expect_status 0 bash "$fixture/scripts/build.sh"
 log="$(< "$script_test_log")"
 assert_contains "$log" "$fixture|"
-assert_contains "$log" '-X github.com/horsenuggets/tf4fmt/src/version.Version=0.0.0'
-assert_contains "$log" '-o dist/tf4fmt ./src/cmd/tf4fmt'
+assert_contains "$log" '-X github.com/horsenuggets/hcl4fmt/src/version.Version=0.0.0'
+assert_contains "$log" '-o dist/hcl4fmt ./src/cmd/hcl4fmt'
 
 export script_test_goos=windows
 expect_status 0 bash "$fixture/scripts/build.sh"
 log="$(< "$script_test_log")"
-assert_contains "$log" '-o dist/tf4fmt.exe ./src/cmd/tf4fmt'
+assert_contains "$log" '-o dist/hcl4fmt.exe ./src/cmd/hcl4fmt'
 
 : > "$script_test_log"
 expect_status 0 bash "$fixture/scripts/cross.sh"
@@ -70,7 +70,7 @@ for os in darwin linux windows; do
         suffix=''
         [[ "$os" != windows ]] || suffix='.exe'
         assert_contains "$log" "$fixture|$os|$arch|0|build"
-        assert_contains "$log" "-o dist/tf4fmt-$os-$arch$suffix ./src/cmd/tf4fmt"
+        assert_contains "$log" "-o dist/hcl4fmt-$os-$arch$suffix ./src/cmd/hcl4fmt"
     done
 done
 

@@ -1,8 +1,8 @@
-# tf4fmt
+# hcl4fmt
 
 Terraform formatter with four-space indentation.
 
-`tf4fmt` formats native HCL in `.tf`, `.tfvars`, `.tftest.hcl`, `.tfmock.hcl`,
+`hcl4fmt` formats native HCL in `.tf`, `.tfvars`, `.tftest.hcl`, `.tfmock.hcl`,
 `.tfquery.hcl`, and `.terraform.lock.hcl` files using four spaces per indentation level.
 It uses one space around `=` and before trailing comments, and removes trailing commas from
 list constructors. It does not perform Terraform modernization or rewrite expressions into
@@ -13,19 +13,19 @@ newer Terraform syntax. JSON files, including `.tf.json` and `.tfvars.json`, are
 Run the formatter on a file or directory...
 
 ```sh
-tf4fmt main.tf
-tf4fmt .
+hcl4fmt main.tf
+hcl4fmt .
 ```
 
 Choose the behavior needed for a local edit or automated check...
 
-- **Check** → Use `tf4fmt -check .` to fail when files need formatting.
-- **Diff** → Use `tf4fmt -diff -write=false .` to inspect changes without writing files.
-- **Recursive** → Use `tf4fmt -recursive .` to include nested directories.
-- **Output Only** → Use `tf4fmt -write=false -list=false main.tf` to print formatted HCL
+- **Check** → Use `hcl4fmt -check .` to fail when files need formatting.
+- **Diff** → Use `hcl4fmt -diff -write=false .` to inspect changes without writing files.
+- **Recursive** → Use `hcl4fmt -recursive .` to include nested directories.
+- **Output Only** → Use `hcl4fmt -write=false -list=false main.tf` to print formatted HCL
   without writing the file or listing its name.
-- **Quiet Listing** → Use `tf4fmt -list=false .` to suppress formatted file names.
-- **Standard Input** → Use `tf4fmt - < main.tf` to format stdin and write to stdout.
+- **Quiet Listing** → Use `hcl4fmt -list=false .` to suppress formatted file names.
+- **Standard Input** → Use `hcl4fmt - < main.tf` to format stdin and write to stdout.
 
 Place flags before file or directory arguments. Use `-` as an explicit stdin argument.
 
@@ -36,9 +36,9 @@ in `submodules/hcl/`...
 
 ```sh
 git clone --recurse-submodules <repository-url>
-cd tf4fmt
+cd hcl4fmt
 scripts/build.sh
-./dist/tf4fmt -check .
+./dist/hcl4fmt -check .
 ```
 
 For an existing clone, initialize the dependency before building...
@@ -48,14 +48,14 @@ git submodule update --init --recursive
 ```
 
 The build script reads `VERSION` and injects it into
-`github.com/horsenuggets/tf4fmt/src/version.Version`. Windows builds use the `.exe`
+`github.com/horsenuggets/hcl4fmt/src/version.Version`. Windows builds use the `.exe`
 extension. Scripts resolve the repository from their own location, so they work from other
 working directories as well.
 
 A direct Go build also requires the initialized submodule...
 
 ```sh
-go build -o dist/tf4fmt ./src/cmd/tf4fmt
+go build -o dist/hcl4fmt ./src/cmd/hcl4fmt
 ```
 
 Use `scripts/build.sh` when version injection is needed. Installation with
@@ -73,7 +73,7 @@ workspace root...
 {
   "customLocalFormatters.formatters": [
     {
-      "command": "go -C Submodules/tf4fmt run ./src/cmd/tf4fmt -",
+      "command": "go -C Submodules/hcl4fmt run ./src/cmd/hcl4fmt -",
       "languages": [
         "terraform",
         "terraform-mock",

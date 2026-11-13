@@ -6,6 +6,7 @@ const { downloadAndUnzipVSCode, runTests } = require("@vscode/test-electron");
 const { cliEntryPoint } = require("./cli.cjs");
 
 const languages = [
+  "hcl",
   "terraform",
   "terraform-mock",
   "terraform-search",
@@ -16,10 +17,12 @@ const languages = [
 async function main() {
   const root = path.resolve(__dirname, "../..");
   const temporary = await fs.mkdtemp(
-    path.join(os.tmpdir(), "tf4fmt editor tests "),
+    path.join(os.tmpdir(), "hcl4fmt editor tests "),
   );
   try {
-    const vscodeExecutablePath = await downloadAndUnzipVSCode("stable");
+    const vscodeExecutablePath =
+      process.env.VSCODE_EXECUTABLE_PATH ??
+      (await downloadAndUnzipVSCode("stable"));
     const extensions = path.join(temporary, "extensions");
     const userData = path.join(temporary, "profile");
     const launcher =
@@ -31,6 +34,7 @@ async function main() {
         : undefined;
     const cli = cliEntryPoint(vscodeExecutablePath, process.platform, launcher);
     for (const extension of [
+      "hashicorp.hcl",
       "hashicorp.terraform",
       "jkillian.custom-local-formatters",
     ]) {
@@ -57,13 +61,13 @@ async function main() {
       await fs.mkdir(path.join(workspace, directory), { recursive: true });
       await fs.symlink(
         root,
-        path.join(workspace, directory, "tf4fmt"),
+        path.join(workspace, directory, "hcl4fmt"),
         process.platform === "win32" ? "junction" : "dir",
       );
       const settings = {
         "customLocalFormatters.formatters": [
           {
-            command: `go -C ${directory}/tf4fmt run ./src/cmd/tf4fmt -`,
+            command: `go -C ${directory}/hcl4fmt run ./src/cmd/hcl4fmt -`,
             languages,
           },
         ],
