@@ -9,8 +9,13 @@ import (
 	"strings"
 )
 
-// Supported reports whether a file has a native Terraform HCL suffix.
+const dependencyLockFilename = ".terraform.lock.hcl"
+
+// Supported reports whether a file is native Terraform HCL or a dependency lockfile.
 func Supported(path string) bool {
+	if filepath.Base(path) == dependencyLockFilename {
+		return true
+	}
 	for _, suffix := range []string{".tf", ".tfvars", ".tftest.hcl", ".tfmock.hcl", ".tfquery.hcl"} {
 		if strings.HasSuffix(path, suffix) {
 			return true
@@ -20,6 +25,9 @@ func Supported(path string) bool {
 }
 
 func ignored(name string) bool {
+	if name == dependencyLockFilename {
+		return false
+	}
 	return strings.HasPrefix(name, ".") || strings.HasPrefix(name, "~") ||
 		strings.HasSuffix(name, "~") || (strings.HasPrefix(name, "#") && strings.HasSuffix(name, "#"))
 }

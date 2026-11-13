@@ -164,6 +164,29 @@ func TestRunRecursion(t *testing.T) {
 	}
 }
 
+func TestRunDependencyLockFile(t *testing.T) {
+	root := t.TempDir()
+	path := filepath.Join(root, ".terraform.lock.hcl")
+	before := "provider \"registry.terraform.io/hashicorp/null\" {\nversion    = \"3.2.4\"\nconstraints = \">= 3.0.0\"\nhashes=[\n\"h1:abc\",\n]\n}\n"
+	after := "provider \"registry.terraform.io/hashicorp/null\" {\n    version = \"3.2.4\"\n    constraints = \">= 3.0.0\"\n    hashes = [\n        \"h1:abc\",\n    ]\n}\n"
+	if err := os.WriteFile(path, []byte(before), 0600); err != nil {
+		t.Fatal(err)
+	}
+	var stdout, stderr bytes.Buffer
+	if code := run([]string{path}, strings.NewReader(""), &stdout, &stderr); code != 0 || stdout.String() != path+"\n" || stderr.Len() != 0 {
+		t.Fatalf("Unexpected lockfile result. Exit %d, stdout %q, stderr %q.", code, stdout.String(), stderr.String())
+	}
+	got, err := os.ReadFile(path)
+	if err != nil || string(got) != after {
+		t.Fatalf("Unexpected lockfile content %q with error %v.", got, err)
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := run([]string{"-check", "-recursive", root}, strings.NewReader(""), &stdout, &stderr); code != 0 || stdout.Len() != 0 || stderr.Len() != 0 {
+		t.Fatalf("Lockfile was not clean during discovery. Exit %d, stdout %q, stderr %q.", code, stdout.String(), stderr.String())
+	}
+}
+
 func TestRunBadArgumentsAndPaths(t *testing.T) {
 	root := t.TempDir()
 	unsupported := filepath.Join(root, "main.tf.json")
