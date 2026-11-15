@@ -37,8 +37,8 @@ locals {
     main_checks = [
         "build",
         "lint",
-        "test (ubuntu-latest)",
-        "test (windows-latest)"
+        "test-ubuntu-latest",
+        "test-windows-latest"
     ]
 }
 
