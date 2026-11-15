@@ -1,89 +1,89 @@
 name: CI
 
 on:
-  pull_request:
-  push:
-    branches:
-      - main
+    pull_request:
+    push:
+        branches:
+            - main
 
 permissions:
-  contents: read
+    contents: read
 
 jobs:
-  build:
-    name: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-      - name: Build and smoke test native binary
-        run: |
-          scripts/build.sh
-          ./dist/hcl4fmt --help
-          ./dist/hcl4fmt --version
-      - name: Cross compile supported targets
-        run: scripts/cross.sh
-      - uses: actions/upload-artifact@v4
-        with:
-          name: binaries
-          path: dist/
-          if-no-files-found: error
+    build:
+        name: build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  submodules: recursive
+            - uses: actions/setup-go@v5
+              with:
+                  go-version-file: go.mod
+            - name: Build and smoke test native binary
+              run: |
+                  scripts/build.sh
+                  ./dist/hcl4fmt --help
+                  ./dist/hcl4fmt --version
+            - name: Cross compile supported targets
+              run: scripts/cross.sh
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: binaries
+                  path: dist/
+                  if-no-files-found: error
 
-  lint:
-    name: lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-      - name: Install golangci-lint
-        run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0
-      - name: Install ShellCheck
-        run: sudo apt-get update && sudo apt-get install --yes shellcheck
-      - name: Check formatting and lint
-        run: scripts/lint.sh
+    lint:
+        name: lint
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  submodules: recursive
+            - uses: actions/setup-go@v5
+              with:
+                  go-version-file: go.mod
+            - name: Install golangci-lint
+              run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0
+            - name: Install ShellCheck
+              run: sudo apt-get update && sudo apt-get install --yes shellcheck
+            - name: Check formatting and lint
+              run: scripts/lint.sh
 
-  test:
-    name: test (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-      - name: Test scripts and Go with race detection
-        if: runner.os == 'Linux'
-        run: scripts/test.sh
-      - name: Test Windows behavior
-        if: runner.os == 'Windows'
-        run: go test ./...
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - name: Test VS Code format-on-save
-        if: runner.os == 'Linux'
-        working-directory: tests/vscode
-        run: |
-          npm ci
-          xvfb-run -a npm test
-      - name: Test VS Code Windows paths
-        if: runner.os == 'Windows'
-        working-directory: tests/vscode
-        run: |
-          npm ci
-          npm test
+    test:
+        name: test (${{ matrix.os }})
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os:
+                    - ubuntu-latest
+                    - windows-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  submodules: recursive
+            - uses: actions/setup-go@v5
+              with:
+                  go-version-file: go.mod
+            - name: Test scripts and Go with race detection
+              if: runner.os == 'Linux'
+              run: scripts/test.sh
+            - name: Test Windows behavior
+              if: runner.os == 'Windows'
+              run: go test ./...
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+            - name: Test VS Code format-on-save
+              if: runner.os == 'Linux'
+              working-directory: tests/vscode
+              run: |
+                  npm ci
+                  xvfb-run -a npm test
+            - name: Test VS Code Windows paths
+              if: runner.os == 'Windows'
+              working-directory: tests/vscode
+              run: |
+                  npm ci
+                  npm test
