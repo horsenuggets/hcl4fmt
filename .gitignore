@@ -26,3 +26,8 @@ node_modules/
 # Parallel worktrees at the repository root
 /.worktrees/
 /.wt/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
