@@ -2,13 +2,14 @@
 
 HCL formatter with four-space indentation.
 
-`hcl4fmt` formats native HCL in any `.hcl` file, plus `.tf` and `.tfvars` files, using four
-spaces per indentation level. That covers Terraform files such as `.tftest.hcl`,
-`.tfmock.hcl`, `.tfquery.hcl`, and the `.terraform.lock.hcl` dependency lockfile. Directory
-scans skip hidden directories such as `.terraform/`, and the exact `.terraform.lock.hcl`
-file is the only hidden file they include. It uses one space around `=` and before trailing comments, and removes trailing commas from
-list constructors. It does not perform Terraform modernization or rewrite expressions into
-newer Terraform syntax. JSON files, including `.tf.json` and `.tfvars.json`, are skipped.
+`hcl4fmt` formats native HCL in any `.hcl` file, plus `.tf` and `.tfvars` files, using
+four spaces per indentation level. That covers Terraform files such as `.tftest.hcl`,
+`.tfmock.hcl`, `.tfquery.hcl`, and the `.terraform.lock.hcl` dependency lockfile.
+Directory scans skip hidden directories such as `.terraform/`, and the exact
+`.terraform.lock.hcl` file is the only hidden file they include. It uses one space around
+`=` and before trailing comments, and removes trailing commas from list constructors. It
+does not perform Terraform modernization or rewrite expressions into newer Terraform
+syntax. JSON files, including `.tf.json` and `.tfvars.json`, are skipped.
 
 ## Usage
 
@@ -67,41 +68,41 @@ local HCL submodule.
 ## VS Code
 
 Install the HashiCorp HCL, HashiCorp Terraform, and Custom Local Formatters extensions,
-and make Go available on `PATH`. Initialize the pinned formatter submodule recursively. In a trusted,
-single-folder repository window, configure a stdin formatter command relative to the
-workspace root...
+and make Go available on `PATH`. Initialize the pinned formatter submodule recursively. In
+a trusted, single-folder repository window, configure a stdin formatter command relative
+to the workspace root...
 
 ```json
 {
-  "customLocalFormatters.formatters": [
-    {
-      "command": "go -C Submodules/hcl4fmt run ./src/cmd/hcl4fmt -",
-      "languages": [
-        "hcl",
-        "terraform",
-        "terraform-mock",
-        "terraform-search",
-        "terraform-test",
-        "terraform-vars"
-      ]
+    "customLocalFormatters.formatters": [
+        {
+            "command": "go -C Submodules/hcl4fmt run ./src/cmd/hcl4fmt -",
+            "languages": [
+                "hcl",
+                "terraform",
+                "terraform-mock",
+                "terraform-search",
+                "terraform-test",
+                "terraform-vars"
+            ]
+        }
+    ],
+    "[hcl]": {
+        "editor.defaultFormatter": "jkillian.custom-local-formatters",
+        "editor.detectIndentation": false,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    "[terraform]": {
+        "editor.defaultFormatter": "jkillian.custom-local-formatters",
+        "editor.detectIndentation": false,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
     }
-  ],
-  "[hcl]": {
-    "editor.defaultFormatter": "jkillian.custom-local-formatters",
-    "editor.detectIndentation": false,
-    "editor.formatOnSave": true,
-    "editor.formatOnSaveMode": "file",
-    "editor.insertSpaces": true,
-    "editor.tabSize": 4
-  },
-  "[terraform]": {
-    "editor.defaultFormatter": "jkillian.custom-local-formatters",
-    "editor.detectIndentation": false,
-    "editor.formatOnSave": true,
-    "editor.formatOnSaveMode": "file",
-    "editor.insertSpaces": true,
-    "editor.tabSize": 4
-  }
 }
 ```
 
@@ -109,8 +110,8 @@ Keep `.tf` files in Terraform mode and generic `.hcl` files, including
 `.terraform.lock.hcl`, in HCL mode. Match the submodule directory's actual casing and
 repeat the language-specific editor settings for the other registered language IDs.
 Preserve existing settings and formatter registrations. Recommend `hashicorp.hcl`,
-`hashicorp.terraform`, and `jkillian.custom-local-formatters` in `.vscode/extensions.json`;
-recommendations do not automatically install extensions.
+`hashicorp.terraform`, and `jkillian.custom-local-formatters` in
+`.vscode/extensions.json`; recommendations do not automatically install extensions.
 
 Explicit saves format the buffer through stdin, including files in nested directories and
 workspace paths containing spaces. Timer-based Auto Save does not run VS Code's normal
